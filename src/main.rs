@@ -25,7 +25,7 @@ fn main() -> Result<()> {
         } else {
             let wraped_code = wrap_code_in_proc_macro(&code, &input);
             write_code(&wraped_code)?;
-            let output = cargo_build()?;
+            let output = cargo_check()?;
             println!("[Out] {}", output);
         }
 
@@ -85,9 +85,9 @@ fn write_code(input: &str) -> Result<()> {
     Ok(())
 }
 
-fn cargo_build() -> Result<String> {
+fn cargo_check() -> Result<String> {
     let out = process::Command::new("cargo")
-        .arg("build")
+        .args(&["check", "--bin", "pm", "--quiet"])
         .args(&["--color", "always"])
         .current_dir(env::temp_dir().join("pm"))
         .output()?;
