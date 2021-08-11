@@ -23,7 +23,7 @@ fn main() -> Result<()> {
         } else if input.ends_with(';') {
             code.push_str(&input);
         } else {
-            let wraped_code = wrap_code_in_proc_macro(code.clone() + "\n" + &input);
+            let wraped_code = wrap_code_in_proc_macro(&code, &input);
             write_code(&wraped_code)?;
             let output = cargo_build()?;
             println!("[Out] {}", output);
@@ -65,17 +65,18 @@ pm::genrerated!();
     Ok(())
 }
 
-fn wrap_code_in_proc_macro(code: String) -> String {
+fn wrap_code_in_proc_macro(code: &str, input: &str) -> String {
     format!(
         "
     use proc_macro::*;
     #[proc_macro]
      pub fn genrerated(_item: TokenStream) -> TokenStream {{
+    {}
      println!(\"{{:?}}\", {{\n{}\n}});
      TokenStream::new()
      }}
     ",
-        code
+        code, input
     )
 }
 
